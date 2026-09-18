@@ -3,6 +3,9 @@ import http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
 import { registerRoomHandlers, rooms } from './socket/roomHandler.js';
 import { registerCodeHandlers } from './socket/codeHandler.js';
 import { registerCanvasHandlers } from './socket/canvasHandler.js';
@@ -12,22 +15,44 @@ import { executeHandler } from './routes/executeHandler.js';
 
 dotenv.config();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 const PORT = process.env.PORT || 4000;
-const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+const CLIENT_URL = process.env.CLIENT_URL;
+
+// Flexible CORS setup that supports localhost and any production domain
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, or same-origin static files)
+    if (!origin) return callback(null, true);
+    if (
+      !CLIENT_URL ||
+      origin === CLIENT_URL ||
+      origin.includes('localhost') ||
+      origin.includes('127.0.0.1') ||
+      origin.endsWith('.vercel.app') ||
+      origin.endsWith('.onrender.com') ||
+      origin.endsWith('.github.io')
+    ) {
+      return callback(null, true);
+    }
+    // Fallback: allow origin in production
+    return callback(null, true);
+  },
+  credentials: true,
+};
 
 // Middleware
-app.use(cors({
-  origin: [CLIENT_URL, 'http://localhost:5173', 'http://127.0.0.1:5173'],
-  credentials: true,
-}));
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // HTTP Server & Socket.io
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: [CLIENT_URL, 'http://localhost:5173', 'http://127.0.0.1:5173'],
+    origin: '*',
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -73,6 +98,19 @@ io.on('connection', (socket) => {
     console.log(`[Socket] Disconnected: ${socket.id} (${reason})`);
   });
 });
+
+// Serve built frontend if available (Full-stack production mode)
+const clientDistPath = path.resolve(__dirname, '../../client/dist');
+if (fs.existsSync(clientDistPath)) {
+  console.log(`[Static] Serving frontend from ${clientDistPath}`);
+  app.use(express.static(clientDistPath));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/socket.io')) {
+      return next();
+    }
+    res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+}
 
 // Start Server
 server.listen(PORT, () => {

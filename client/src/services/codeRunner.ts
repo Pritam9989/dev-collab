@@ -1,4 +1,4 @@
-﻿export interface ExecutionResult {
+export interface ExecutionResult {
   stdout: string;
   stderr: string;
   exitCode: number;
@@ -7,7 +7,9 @@
   engine?: string;
 }
 
-const BACKEND_URL = 'http://localhost:4000';
+const BACKEND_URL = import.meta.env.VITE_API_URL || (
+  window.location.hostname === 'localhost' ? 'http://localhost:4000' : ''
+);
 
 /**
  * Executes code according to its language nature:
