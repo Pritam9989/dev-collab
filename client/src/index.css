@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: #0a0a0c;
+    color: #e4e4e7;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Custom modern minimalist dark scrollbars */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #27272e;
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3f3f46;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    background: rgba(18, 18, 22, 0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .glass-panel-elevated {
+    background: rgba(24, 24, 30, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-input {
+    background: rgba(14, 14, 18, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .glass-input:focus {
+    outline: none;
+    border-color: rgba(6, 182, 212, 0.5);
+    box-shadow: 0 0 0 1px rgba(6, 182, 212, 0.4), 0 0 16px -4px rgba(6, 182, 212, 0.3);
+  }
+
+  .glass-button {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .glass-button:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.16);
+  }
+
+  .glow-border {
+    position: relative;
+  }
+
+  .glow-border::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.4), rgba(139, 92, 246, 0.4), transparent 70%);
+    z-index: -1;
+    pointer-events: none;
+  }
+}
+
+/* Monaco Editor subtle adjustments */
+.monaco-editor,
+.monaco-editor .overflow-guard {
+  border-radius: 0 0 0 0;
+}
