@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
 const SOCKET_SERVER_URL = import.meta.env.VITE_SOCKET_URL || (
-  window.location.hostname === 'localhost' ? 'http://localhost:4000' : '/'
+  window.location.hostname === 'localhost' ? 'http://localhost:4000' : 'https://piyush-zq94.onrender.com'
 );
 
 export function useSocket() {

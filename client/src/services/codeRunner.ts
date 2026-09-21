@@ -8,7 +8,7 @@ export interface ExecutionResult {
 }
 
 const BACKEND_URL = import.meta.env.VITE_API_URL || (
-  window.location.hostname === 'localhost' ? 'http://localhost:4000' : ''
+  window.location.hostname === 'localhost' ? 'http://localhost:4000' : 'https://piyush-zq94.onrender.com'
 );
 
 /**
